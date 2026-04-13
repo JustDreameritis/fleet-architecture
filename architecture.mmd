@@ -1,0 +1,79 @@
+%%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#1a1a2e', 'primaryTextColor': '#e0e0e0', 'primaryBorderColor': '#4a9eff', 'lineColor': '#4a9eff', 'secondaryColor': '#16213e', 'tertiaryColor': '#0f3460', 'background': '#0a0a1a', 'mainBkg': '#1a1a2e', 'nodeBorder': '#4a9eff', 'clusterBkg': '#0f0f23', 'clusterBorder': '#333366', 'titleColor': '#ffffff', 'edgeLabelBackground': '#1a1a2e'}}}%%
+
+graph TB
+    subgraph ORCHESTRATION["<b>ORCHESTRATION LAYER</b><br/>PM2 Process Manager — 27 Scripts"]
+        PM2["<b>PM2</b><br/>Process Manager<br/><i>Auto-restart, log rotation</i>"]
+        BOTS["<b>Trading Bots</b><br/>Market Making · Grid · Funding Carry"]
+        VERIFY["<b>Verification Suite</b><br/>Fleet Verify · Parity Audit · Watchdog"]
+        SAFETY["<b>Safety Systems</b><br/>Killswitch · Position Limits · Hedge Guard"]
+    end
+
+    subgraph VENUES["<b>VENUE INTEGRATION LAYER</b><br/>6 Concurrent API Connections"]
+        V1["Venue A<br/><i>REST + WS</i>"]
+        V2["Venue B<br/><i>REST + WS</i>"]
+        V3["Venue C<br/><i>REST</i>"]
+        V4["Venue D<br/><i>REST + WS</i>"]
+        V5["Venue E<br/><i>REST</i>"]
+        V6["Venue F<br/><i>REST</i>"]
+    end
+
+    subgraph MCP_SERVER["<b>MCP DIAGNOSTIC SERVER</b><br/>10 Custom Tools"]
+        MCP["<b>MCP Server</b><br/>Claude Code Integration"]
+        T1["query_positions"]
+        T2["check_balances"]
+        T3["hedge_status"]
+        T4["bot_health"]
+        T5["cancel_orders"]
+    end
+
+    subgraph REVIEW["<b>MULTI-MODEL CODE REVIEW</b><br/>6 AI Models in Parallel"]
+        R1["Security<br/><i>Llama 4 Scout</i>"]
+        R2["Architecture<br/><i>Gemma 2</i>"]
+        R3["Performance<br/><i>Mistral</i>"]
+        R4["Edge Cases<br/><i>Gemini Flash</i>"]
+        R5["Deep Reasoning<br/><i>DeepSeek R1</i>"]
+        R6["Code Quality<br/><i>Qwen 32B</i>"]
+    end
+
+    subgraph ALERTING["<b>ALERTING & MONITORING</b>"]
+        TG["<b>Telegram Bot</b><br/>Real-time alerts"]
+        LOGS["<b>Structured Logs</b><br/>PM2 log aggregation"]
+        CRON["<b>Watchdog Cron</b><br/>*/30 health check"]
+    end
+
+    subgraph INFRA["<b>INFRASTRUCTURE</b>"]
+        VPS["<b>VPS</b><br/>SSH hardened · UFW firewall"]
+        TAIL["<b>Tailscale</b><br/>Encrypted mesh VPN"]
+        GIT["<b>GitHub</b><br/>Version control · Code review"]
+    end
+
+    PM2 --> BOTS
+    PM2 --> VERIFY
+    PM2 --> SAFETY
+    BOTS --> V1 & V2 & V3 & V4 & V5 & V6
+    VERIFY --> V1 & V2 & V3 & V4 & V5 & V6
+    SAFETY --> BOTS
+    MCP --> T1 & T2 & T3 & T4 & T5
+    MCP --> VERIFY
+    REVIEW --> R1 & R2 & R3 & R4 & R5 & R6
+    REVIEW --> GIT
+    VERIFY --> TG
+    SAFETY --> TG
+    CRON --> VERIFY
+    PM2 --> LOGS
+    VPS --> PM2
+    TAIL --> VPS
+
+    classDef orchestration fill:#1a1a2e,stroke:#4a9eff,stroke-width:2px,color:#e0e0e0
+    classDef venue fill:#16213e,stroke:#00d4aa,stroke-width:2px,color:#e0e0e0
+    classDef mcp fill:#1a1a2e,stroke:#ff6b6b,stroke-width:2px,color:#e0e0e0
+    classDef review fill:#1a1a2e,stroke:#ffd93d,stroke-width:2px,color:#e0e0e0
+    classDef alert fill:#16213e,stroke:#ff9f43,stroke-width:2px,color:#e0e0e0
+    classDef infra fill:#0f3460,stroke:#6c5ce7,stroke-width:2px,color:#e0e0e0
+
+    class PM2,BOTS,VERIFY,SAFETY orchestration
+    class V1,V2,V3,V4,V5,V6 venue
+    class MCP,T1,T2,T3,T4,T5 mcp
+    class R1,R2,R3,R4,R5,R6 review
+    class TG,LOGS,CRON alert
+    class VPS,TAIL,GIT infra
